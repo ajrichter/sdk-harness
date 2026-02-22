@@ -1,0 +1,47 @@
+{
+  "phase": "discovery",
+  "timestamp": "2025-01-01T00:00:00Z",
+  "usages": [
+    {
+      "endpoint_id": "get-user",
+      "repo": "test-frontend",
+      "file": "src/api.js",
+      "line": 8,
+      "snippet": "const response = await axios.get(`${API_BASE}/api/v1/users/${userId}`);"
+,
+      "language": "javascript"
+    },
+    {
+      "endpoint_id": "create-post",
+      "repo": "test-frontend",
+      "file": "src/api.js",
+      "line": 19,
+      "snippet": "const response = await axios.post(`${API_BASE}/api/v1/posts`, {",
+      "language": "javascript"
+    },
+    {
+      "endpoint_id": "get-user",
+      "repo": "test-frontend",
+      "file": "src/api.js",
+      "line": 33,
+      "snippet": "const response = await fetch(`${API_BASE}/api/v1/users/${userId}`,",
+      "language": "javascript"
+    },
+    {
+      "endpoint_id": "get-user",
+      "repo": "test-backend",
+      "file": "src/main/java/com/example/ApiClient.java",
+      "line": 21,
+      "snippet": ".url(API_BASE + \"/api/v1/users/\" + userId)",
+      "language": "java"
+    },
+    {
+      "endpoint_id": "create-post",
+      "repo": "test-backend",
+      "file": "src/main/java/com/example/ApiClient.java",
+      "line": 35,
+      "snippet": ".url(API_BASE + \"/api/v1/posts\")",
+      "language": "java"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "phase": "narrowing",
+  "timestamp": "2025-01-01T00:05:00Z",
+  "narrowed_usages": [
+    {
+      "endpoint_id": "get-user",
+      "repo": "test-frontend",
+      "file": "src/api.js",
+      "line": 8,
+      "snippet": "const response = await axios.get(`${API_BASE}/api/v1/users/${userId}`);",
+      "language": "javascript",
+      "matched_mappings": ["user_name", "email_address"],
+      "complexity": "low"
+    },
+    {
+      "endpoint_id": "create-post",
+      "repo": "test-frontend",
+      "file": "src/api.js",
+      "line": 19,
+      "snippet": "const response = await axios.post(`${API_BASE}/api/v1/posts`, {",
+      "language": "javascript",
+      "matched_mappings": ["post_title"],
+      "complexity": "medium"
+    },
+    {
+      "endpoint_id": "get-user",
+      "repo": "test-backend",
+      "file": "src/main/java/com/example/ApiClient.java",
+      "line": 21,
+      "snippet": ".url(API_BASE + \"/api/v1/users/\" + userId)",
+      "language": "java",
+      "matched_mappings": ["user_name", "email_address"],
+      "complexity": "low"
+    }
+  ]
+}

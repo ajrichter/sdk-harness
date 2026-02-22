@@ -1,0 +1,40 @@
+{
+  "phase": "generation",
+  "timestamp": "2025-01-01T00:10:00Z",
+  "generated_migrations": [
+    {
+      "endpoint_id": "get-user",
+      "repo": "test-frontend",
+      "file": "src/api.js",
+      "graphql_query": "query GetUser($id: ID!) {\n  user(id: $id) {\n    id\n    userName\n    emailAddress\n  }\n}",
+      "new_code": "import { useQuery } from '@apollo/client';\n\nconst GET_USER = gql`\n  query GetUser($id: ID!) {\n    user(id: $id) {\n      id\n      userName\n      emailAddress\n    }\n  }\n`;\n\nasync function getUser(userId) {\n  const { data } = await client.query({ query: GET_USER, variables: { id: userId } });\n  return data.user;\n}",
+      "imports": [
+        "import { useQuery } from '@apollo/client';",
+        "import { gql } from '@apollo/client';",
+        "import client from './apollo-client';"
+      ]
+    },
+    {
+      "endpoint_id": "create-post",
+      "repo": "test-frontend",
+      "file": "src/api.js",
+      "graphql_query": "mutation CreatePost($title: String!, $content: String!) {\n  createPost(input: { title: $title, content: $content }) {\n    id\n    title\n    content\n  }\n}",
+      "new_code": "const CREATE_POST = gql`\n  mutation CreatePost($title: String!, $content: String!) {\n    createPost(input: { title: $title, content: $content }) {\n      id\n      title\n      content\n    }\n  }\n`;\n\nasync function createPost(title, content) {\n  const { data } = await client.mutate({ mutation: CREATE_POST, variables: { title, content } });\n  return data.createPost;\n}",
+      "imports": [
+        "import { gql } from '@apollo/client';",
+        "import client from './apollo-client';"
+      ]
+    },
+    {
+      "endpoint_id": "get-user",
+      "repo": "test-backend",
+      "file": "src/main/java/com/example/ApiClient.java",
+      "graphql_query": "query GetUser($id: ID!) {\n  user(id: $id) {\n    id\n    userName\n    emailAddress\n  }\n}",
+      "new_code": "import com.apollographql.apollo.ApolloClient;\nimport com.apollographql.apollo.api.Query;\n\npublic User getUser(String userId) {\n  GetUserQuery query = new GetUserQuery(userId);\n  ApolloQueryCall<GetUserQuery.Data> call = apolloClient.query(query);\n  GetUserQuery.Data data = call.execute();\n  GetUserQuery.User user = data.user();\n  return new User(user.id(), user.userName(), user.emailAddress());\n}",
+      "imports": [
+        "import com.apollographql.apollo.ApolloClient;",
+        "import com.apollographql.apollo.api.Query;"
+      ]
+    }
+  ]
+}
