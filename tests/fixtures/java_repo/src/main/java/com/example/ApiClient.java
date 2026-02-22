@@ -6,21 +6,66 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
- * Sample Java REST API client
+ * REST API client.
+ *
+ * The base URL is loaded from application.properties (key: api.base-url).
+ * The secondary constructor accepts an explicit URL for test injection —
+ * this is the seam the test uses to redirect calls to WireMock.
  */
 public class ApiClient {
-    private static final String API_BASE = "https://api.example.com";
-    private final OkHttpClient httpClient = new OkHttpClient();
-    private final Gson gson = new Gson();
+
+    private final String apiBaseUrl;
+    private final OkHttpClient httpClient;
+    private final Gson gson;
+
+    /** Production constructor — reads api.base-url from application.properties. */
+    public ApiClient() {
+        this(loadBaseUrl());
+    }
 
     /**
-     * Get user by ID
+     * Test-injection constructor.
+     * Accepts any base URL, which lets tests point the client at WireMock
+     * without touching the properties file.
+     */
+    public ApiClient(String apiBaseUrl) {
+        this.apiBaseUrl = apiBaseUrl;
+        this.httpClient = new OkHttpClient();
+        this.gson = new Gson();
+    }
+
+    /**
+     * Reads api.base-url from /application.properties on the classpath.
+     *
+     * This is the READER method the migration harness needs to detect:
+     *   property file  →  this method  →  passed to constructors and HTTP calls.
+     */
+    static String loadBaseUrl() {
+        Properties props = new Properties();
+        try (InputStream is = ApiClient.class.getResourceAsStream("/application.properties")) {
+            if (is != null) {
+                props.load(is);
+            }
+        } catch (IOException ignored) {
+        }
+        return props.getProperty("api.base-url", "https://api.example.com");
+    }
+
+    // ---------- API Methods ----------
+
+    /**
+     * GET /api/v1/users/{id}
+     *
+     * Uses apiBaseUrl (from properties) as prefix — the migration harness
+     * should replace this entire method with a GraphQL query.
      */
     public User getUser(String userId) throws IOException {
         Request request = new Request.Builder()
-                .url(API_BASE + "/api/v1/users/" + userId)
+                .url(apiBaseUrl + "/api/v1/users/" + userId)
                 .build();
 
         try (Response response = httpClient.newCall(request).execute()) {
@@ -32,7 +77,9 @@ public class ApiClient {
     }
 
     /**
-     * Create a new post
+     * POST /api/v1/posts
+     *
+     * Same pattern: uses apiBaseUrl prefix.
      */
     public Post createPost(String postTitle, String postContent) throws IOException {
         Post post = new Post();
@@ -43,7 +90,7 @@ public class ApiClient {
         RequestBody body = RequestBody.create(json, okhttp3.MediaType.parse("application/json"));
 
         Request request = new Request.Builder()
-                .url(API_BASE + "/api/v1/posts")
+                .url(apiBaseUrl + "/api/v1/posts")
                 .post(body)
                 .build();
 
@@ -55,9 +102,8 @@ public class ApiClient {
         return null;
     }
 
-    /**
-     * User model
-     */
+    // ---------- Models ----------
+
     public static class User {
         private String id;
         private String user_name;
@@ -65,17 +111,12 @@ public class ApiClient {
 
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
-
         public String getUserName() { return user_name; }
         public void setUserName(String user_name) { this.user_name = user_name; }
-
         public String getEmailAddress() { return email_address; }
         public void setEmailAddress(String email_address) { this.email_address = email_address; }
     }
 
-    /**
-     * Post model
-     */
     public static class Post {
         private String id;
         private String post_title;
@@ -83,10 +124,8 @@ public class ApiClient {
 
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
-
         public String getTitle() { return post_title; }
         public void setTitle(String title) { this.post_title = title; }
-
         public String getContent() { return post_content; }
         public void setContent(String content) { this.post_content = content; }
     }
