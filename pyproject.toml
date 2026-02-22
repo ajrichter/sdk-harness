@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "REST-to-GraphQL migration automation using Claude Agent SDK"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Anthropic", email = "support@anthropic.com"}
 ]
@@ -34,6 +34,7 @@ dev = [
 migration-harness = "migration_harness.main:main"
 
 [tool.setuptools]
+package-dir = {"" = "src"}
 packages = ["migration_harness"]
 
 [tool.setuptools.package-data]
