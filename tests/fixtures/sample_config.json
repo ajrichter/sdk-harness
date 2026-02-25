@@ -1,0 +1,70 @@
+{
+  "project_name": "test-rest-to-graphql",
+  "work_dir": "/tmp/test-migration-workspace",
+  "repositories": [
+    {
+      "name": "test-frontend",
+      "url": "https://github.com/example/test-frontend.git",
+      "branch": "main",
+      "language": "javascript"
+    },
+    {
+      "name": "test-backend",
+      "url": "https://github.com/example/test-backend.git",
+      "branch": "main",
+      "language": "java"
+    }
+  ],
+  "rest_endpoints": [
+    {
+      "id": "get-user",
+      "method": "GET",
+      "path": "/api/v1/users/{id}",
+      "patterns": [
+        "fetch('/api/v1/users/",
+        "axios.get('/api/v1/users/",
+        "RestClient.get(\"/api/v1/users/"
+      ]
+    },
+    {
+      "id": "create-post",
+      "method": "POST",
+      "path": "/api/v1/posts",
+      "patterns": [
+        "fetch('/api/v1/posts',",
+        "axios.post('/api/v1/posts',",
+        "RestClient.post(\"/api/v1/posts\","
+      ]
+    }
+  ],
+  "attribute_mappings": [
+    {
+      "endpoint_id": "get-user",
+      "rest_attribute": "user_name",
+      "graphql_field": "userName",
+      "graphql_type": "User"
+    },
+    {
+      "endpoint_id": "get-user",
+      "rest_attribute": "email_address",
+      "graphql_field": "emailAddress",
+      "graphql_type": "User"
+    },
+    {
+      "endpoint_id": "create-post",
+      "rest_attribute": "post_title",
+      "graphql_field": "title",
+      "graphql_type": "Post"
+    }
+  ],
+  "graphql_endpoint": "https://api.example.com/graphql",
+  "graphql_schema_path": "./tests/fixtures/schema.graphql",
+  "options": {
+    "dry_run": false,
+    "create_branches": true,
+    "branch_prefix": "migration/rest-to-graphql",
+    "max_concurrent_repos": 2,
+    "model": "claude-sonnet-4-5-20250929",
+    "max_turns_per_phase": 50
+  }
+}

@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+}
+
+// ── Java 25 toolchain ──────────────────────────────────────────────────────
+// Gradle will auto-provision JDK 25 via toolchain resolution if it isn't
+// already present. The daemon (configured in gradle.properties) keeps the
+// JVM warm between test runs, which is the main reason iteration is fast.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // ── Production ────────────────────────────────────────────────────────
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    // ── Test ─────────────────────────────────────────────────────────────
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly  'org.junit.platform:junit-platform-launcher'
+
+    // WireMock 3.x — ships its own Jetty; no extra servlet container needed.
+    // It stubs HTTP at the network layer so we verify the real URL string
+    // that ApiClient constructs, not just a method argument.
+    testImplementation 'org.wiremock:wiremock:3.10.0'
+
+    // Needed to parse the properties file in tests independently of ApiClient
+    testImplementation 'org.assertj:assertj-core:3.26.3'
+}
+
+test {
+    useJUnitPlatform()
+
+    // Emit JUnit XML reports — the Python migration harness reads these
+    // in its validation phase (see migration_harness/pipeline/gradle_runner.py).
+    reports {
+        junitXml.required = true
+        html.required    = true
+    }
+
+    // Stream stdout/stderr so CI and the Python runner see it live
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        exceptionFormat 'full'
+    }
+}
